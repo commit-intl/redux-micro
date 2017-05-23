@@ -1,0 +1,27 @@
+{
+  "name": "micro-redux",
+  "version": "1.0.0",
+  "description": "tiny redux store",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShynRou/micro-redux.git"
+  },
+  "keywords": [
+    "redux",
+    "mini",
+    "micro",
+    "minified",
+    "javascript",
+    "js"
+  ],
+  "author": "Dustin Hagemeier",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/ShynRou/micro-redux/issues"
+  },
+  "homepage": "https://github.com/ShynRou/micro-redux#readme"
+}
