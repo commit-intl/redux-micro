@@ -1,54 +1,56 @@
-const addArrayTo = (array, target) => {
-  array.forEach(element => {
-    element.actions.forEach( action => {
-      if(target[action])
-        target[action].push(element);
-      else
-        target[action] = [element];
+
+const store = function (state, reducers, effects) {
+  var addArrayTo = (array, target) => {
+    array.forEach(element => {
+      element.actions.forEach(action => {
+        if (target[action])
+          target[action].push(element);
+        else
+          target[action] = [element];
+      });
     });
-  });
+  };
+
+  this.s = state; // STATE
+  this.r = {}; // REDUCERS
+  this.e = {}; // EFFECTS
+  reducers && addArrayTo(reducers, this.r);
+  effects && addArrayTo(effects, this.r);
+  this.o = {}; // OBSERVERS
+  this.i = 0; // NEXT ID
 };
 
-export default class Store {
+store.prototype = {
+  listen: function (target, callback) {
+    if (!this.o[target])
+      this.o[target] = {};
+    this.o[target][this.i] = callback;
+    return this.i++;
+  },
 
-  constructor(state = {}, reducers = null, effects = null) {
-    this.state = state;
-    this.reducers = {};
-    this.effects = {};
-    reducers && addArrayTo(reducers, this.reducers);
-    effects && addArrayTo(effects, this.reducers);
-    this.observers = {};
-    this.nextId = 0;
-  }
-
-  listen(target, callback) {
-    if(!this.observers[target])
-      this.observers[target] = {};
-    this.observers[target][this.nextId] = callback;
-    return this.nextId++;
-  }
-
-  removeListener(id) {
-    for(let targets of this.observers) {
+  removeListener: function (id) {
+    for (let targets of this.o) {
       delete targets[id];
     }
-  }
+  },
 
-  dispatch(action, payload = null) {
-    if(this.reducers[action]) {
-      this.reducers[action].forEach(reducer => {
-        this.state[reducer.target] = reducer.func(payload, this.state[reducer.target]);
-        if(this.observers[reducer.target]) {
-          for (let id in this.observers[reducer.target]){
-            this.observers[reducer.target][id](this.state[reducer.target]);
-          };
+  dispatch: function (action, payload) {
+    if (this.r[action]) {
+      this.r[action].forEach(reducer => {
+        this.s = Object.assign({}, this.s, {[reducer.target]: reducer.func(payload, this.s[reducer.target])});
+        if (this.o[reducer.target]) {
+          for (let id in this.o[reducer.target]) {
+            this.o[reducer.target][id](this.s[reducer.target]);
+          }
         }
       });
     }
-    if(this.effects[action]) {
-      this.effects[action].forEach(effect => {
+    if (this.e[action]) {
+      this.e[action].forEach(effect => {
         effect.func(payload, actions => actions.forEach(a => this.dispatch(a.action, a.payload)));
       });
     }
   }
 };
+
+module.exports = store;
