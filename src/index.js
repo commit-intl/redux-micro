@@ -28,7 +28,7 @@ store.prototype = {
   },
 
   removeListener: function (id) {
-    for (let targets in Object.keys(this.o)) {
+    for (var targets in Object.keys(this.o)) {
       delete this.o[targets][id];
     }
   },
@@ -40,7 +40,7 @@ store.prototype = {
         t[reducer.target] = reducer.func(action, payload, this.s[reducer.target]);
         this.s = Object.assign({}, this.s, t);
         if (this.o[reducer.target]) {
-          for (let id in this.o[reducer.target]) {
+          for (var id in this.o[reducer.target]) {
             this.o[reducer.target][id](this.s[reducer.target]);
           }
         }
