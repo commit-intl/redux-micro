@@ -1,7 +1,7 @@
 const store = function (state, reducers, effects) {
   var addArrayTo = function (array, target) {
     array.forEach(function (element) {
-      element.actions.forEach(action => {
+      element.actions.forEach(function (action) {
         if (target[action])
           target[action].push(element);
         else
