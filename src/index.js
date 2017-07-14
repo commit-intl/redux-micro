@@ -1,7 +1,6 @@
-
 const store = function (state, reducers, effects) {
-  var addArrayTo = (array, target) => {
-    array.forEach(element => {
+  var addArrayTo = function (array, target) {
+    array.forEach(function (element) {
       element.actions.forEach(action => {
         if (target[action])
           target[action].push(element);
@@ -29,15 +28,17 @@ store.prototype = {
   },
 
   removeListener: function (id) {
-    for (let targets of this.o) {
-      delete targets[id];
+    for (let targets in Object.keys(this.o)) {
+      delete this.o[targets][id];
     }
   },
 
   dispatch: function (action, payload) {
     if (this.r[action]) {
-      this.r[action].forEach(reducer => {
-        this.s = Object.assign({}, this.s, {[reducer.target]: reducer.func(action, payload, this.s[reducer.target])});
+      this.r[action].forEach(function (reducer) {
+        var t = {};
+        t[reducer.target] = reducer.func(action, payload, this.s[reducer.target]);
+        this.s = Object.assign({}, this.s, t);
         if (this.o[reducer.target]) {
           for (let id in this.o[reducer.target]) {
             this.o[reducer.target][id](this.s[reducer.target]);
@@ -46,8 +47,12 @@ store.prototype = {
       });
     }
     if (this.e[action]) {
-      this.e[action].forEach(effect => {
-        effect.func(action, payload, actions => actions.forEach(a => this.dispatch(a.action, a.payload)));
+      this.e[action].forEach(function (effect) {
+        effect.func(action, payload, function (actions) {
+          actions.forEach(function (a) {
+            this.dispatch(a.action, a.payload)
+          });
+        });
       });
     }
   }
