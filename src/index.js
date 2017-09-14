@@ -10,47 +10,47 @@ const store = function (state, reducers, effects) {
     });
   };
 
-  this.s = state; // STATE
-  this.r = {}; // REDUCERS
-  this.e = {}; // EFFECTS
-  reducers && addArrayTo(reducers, this.r);
-  effects && addArrayTo(effects, this.e);
-  this.o = {}; // OBSERVERS
-  this.i = 0; // NEXT ID
+  this.state = state;
+  this.reducers = {};
+  this.effects = {};
+  reducers && addArrayTo(reducers, this.reducers);
+  effects && addArrayTo(effects, this.effects);
+  this.observers = {};
+  this.id = 0;
 };
 
 store.prototype = {
   listen: function (target, callback) {
-    if (!this.o[target])
-      this.o[target] = {};
-    this.o[target][this.i] = callback;
-    return this.i++;
+    if (!this.observers[target])
+      this.observers[target] = {};
+    this.observers[target][this.id] = callback;
+    return this.id++;
   },
 
   removeListener: function (id) {
-    for (var targets in Object.keys(this.o)) {
-      delete this.o[targets][id];
+    for (var targets in Object.keys(this.observers)) {
+      delete this.observers[targets][id];
     }
   },
 
   dispatch: function (action, payload) {
-    if (this.r[action]) {
-      this.r[action].forEach(function (reducer) {
+    if (this.reducers[action]) {
+      this.reducers[action].forEach(function (reducer) {
         var t = {};
-        t[reducer.target] = reducer.func(action, payload, this.s[reducer.target]);
-        this.s = Object.assign({}, this.s, t);
-        if (this.o[reducer.target]) {
-          for (var id in this.o[reducer.target]) {
-            this.o[reducer.target][id](this.s[reducer.target]);
+        t[reducer.target] = reducer.func(action, payload, this.state[reducer.target]);
+        this.state = Object.assign({}, this.state, t);
+        if (this.observers[reducer.target]) {
+          for (var id in this.observers[reducer.target]) {
+            this.observers[reducer.target][id](this.state[reducer.target]);
           }
         }
       });
     }
-    if (this.e[action]) {
-      this.e[action].forEach(function (effect) {
+    if (this.effects[action]) {
+      this.effects[action].forEach(function (effect) {
         effect.func(action, payload, function (actions) {
           actions.forEach(function (a) {
-            this.dispatch(a.action, a.payload)
+            this.dispatch(a.action, a.payload);
           });
         });
       });

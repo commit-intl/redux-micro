@@ -1,6 +1,6 @@
 {
   "name": "micro-redux",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "tiny redux store",
   "main": "src/index.js",
   "scripts": {
