@@ -1,15 +1,20 @@
-const store = function (state, reducers, effects) {
+const store = function (state, reducers, effects, pipe) {
   var addArrayTo = function (array, target) {
-    array.forEach(function (element) {
-      element.actions.forEach(function (action) {
-        if (target[action])
-          target[action].push(element);
+    var i = array.length;
+    while (i--) {
+      var e = array[i];
+      var j = e.actions.length;
+      while (j--) {
+        var a = e.actions[j];
+        if (target[a])
+          target[a].push(e);
         else
-          target[action] = [element];
-      });
-    });
+          target[a] = [e];
+      }
+    }
   };
 
+  this.pipe = pipe;
   this.state = state;
   this.reducers = {};
   this.effects = {};
@@ -34,26 +39,32 @@ store.prototype = {
   },
 
   dispatch: function (action, payload) {
-    if (this.reducers[action]) {
-      this.reducers[action].forEach(function (reducer) {
-        var t = {};
-        t[reducer.target] = reducer.func(action, payload, this.state[reducer.target]);
-        this.state = Object.assign({}, this.state, t);
-        if (this.observers[reducer.target]) {
-          for (var id in this.observers[reducer.target]) {
-            this.observers[reducer.target][id](this.state[reducer.target]);
+    if(this.pipe) {
+      payload = this.pipe(action, payload);
+    }
+    var i = (this.reducers[action] || []).length;
+    while (i--) {
+      var reducer = this.reducers[action][i];
+      var t = {};
+      t[reducer.target] = reducer.func(action, payload, this.state[reducer.target]);
+      this.state = Object.assign({}, this.state, t);
+      if (this.observers[reducer.target]) {
+        for (var id in this.observers[reducer.target]) {
+          this.observers[reducer.target][id](this.state[reducer.target]);
+        }
+      }
+    }
+    i = (this.effects[action] || []).length;
+    while (i--) {
+      var effect = this.effects[action][i];
+      effect.func(action, payload, function(dispatch) {
+        return function (actions) {
+          var i = (actions || []).length;
+          while (i--) {
+            dispatch(actions[i].action, actions[i].payload);
           }
         }
-      });
-    }
-    if (this.effects[action]) {
-      this.effects[action].forEach(function (effect) {
-        effect.func(action, payload, function (actions) {
-          actions.forEach(function (a) {
-            this.dispatch(a.action, a.payload);
-          });
-        });
-      });
+      }(this.dispatch));
     }
   }
 };
