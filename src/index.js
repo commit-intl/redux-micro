@@ -34,14 +34,14 @@ store.prototype = {
 
   removeListener: function (id) {
     for (var targets in Object.keys(this.observers)) {
-      if(this.observers[targets] && this.observers[targets][id]) {
+      if (this.observers[targets] && this.observers[targets][id]) {
         delete this.observers[targets][id];
       }
     }
   },
 
   dispatch: function (action, payload) {
-    if(this.pipe) {
+    if (this.pipe) {
       payload = this.pipe(action, payload);
     }
     var i = (this.reducers[action] || []).length;
@@ -59,14 +59,16 @@ store.prototype = {
     i = (this.effects[action] || []).length;
     while (i--) {
       var effect = this.effects[action][i];
-      effect.func(action, payload, function(dispatch) {
+      effect.func(action, payload, function (dispatch) {
         return function (actions) {
           var i = (actions || []).length;
           while (i--) {
             dispatch(actions[i].action, actions[i].payload);
           }
-        }
-      }(this.dispatch));
+        };
+      }((action, payload) => {
+        return this.dispatch(action, payload)
+      }));
     }
   }
 };
