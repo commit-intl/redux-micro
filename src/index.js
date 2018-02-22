@@ -34,7 +34,9 @@ store.prototype = {
 
   removeListener: function (id) {
     for (var targets in Object.keys(this.observers)) {
-      delete this.observers[targets][id];
+      if(this.observers[targets] && this.observers[targets][id]) {
+        delete this.observers[targets][id];
+      }
     }
   },
 
