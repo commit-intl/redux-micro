@@ -4,7 +4,9 @@
   "description": "tiny redux store",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --coverage",
+    "build": "babel src --presets stage-0,babili --out-dir dist",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -23,5 +25,12 @@
   "bugs": {
     "url": "https://github.com/ShynRou/micro-redux/issues"
   },
-  "homepage": "https://github.com/ShynRou/micro-redux#readme"
+  "homepage": "https://github.com/ShynRou/micro-redux#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-babili": "^0.1.4",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "jest": "^22.4.3"
+  }
 }
