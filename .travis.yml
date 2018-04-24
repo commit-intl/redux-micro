@@ -1,5 +1,5 @@
 language: node_js
-repo_token: qRWnxIkC87XMv9dCZu6VvqxjDrM2LnMcQ
+repo_token: fI4YqX0TEKvE3BNMklEfaxQwVeQg0kXJ3
 
 node_js:
   - "node"
