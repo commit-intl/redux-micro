@@ -4,7 +4,7 @@
   "description": "tiny redux store",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest --coverage",
+    "test": "jest --coverage src/",
     "build": "babel src --presets stage-0,babili --out-dir dist",
     "prepublish": "npm run build"
   },
