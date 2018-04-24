@@ -1,0 +1,15 @@
+language: node_js
+repo_token: qRWnxIkC87XMv9dCZu6VvqxjDrM2LnMcQ
+
+node_js:
+  - "node"
+cache:
+  directories:
+    - "node_modules"
+
+
+before_script:
+  - npm install
+script:
+  - npm run test
+  - ./node_modules/coveralls/bin/coveralls.js < ./coverage/lcov.info
