@@ -1,6 +1,6 @@
 # redux-micro
 [![Build Status](https://travis-ci.org/coding-intl/redux-micro.svg?branch=master)](https://travis-ci.org/coding-intl/redux-micro)
-[![Coverage Status](https://coveralls.io/repos/github/coding-intl/micro-redux/badge.svg?branch=master)](https://coveralls.io/github/coding-intl/micro-redux?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/coding-intl/redux-micro/badge.svg?branch=master)](https://coveralls.io/github/coding-intl/redux-micro?branch=master)
 
 tiny redux store with effects support
 
