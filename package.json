@@ -1,11 +1,11 @@
 {
   "name": "redux-micro",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "tiny redux store",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "jest --coverage src/",
-    "build": "babel src --presets stage-0,babili --out-dir dist",
+    "build": "babel src/index.js --presets es2015,stage-0,babili --out-file dist/index.js",
     "prepublish": "npm run build"
   },
   "repository": {

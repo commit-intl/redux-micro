@@ -26,14 +26,14 @@ const Store = function (state, actions, reducers, effects, logger) {
 };
 
 Store.prototype = {
-  listen: function (target, callback) {
+  subscribe: function (target, callback) {
     if (!this.observers[target])
       this.observers[target] = {};
     this.observers[target][this.id] = callback;
     return this.id++;
   },
 
-  removeListener: function (id) {
+  unsubscribe: function (id) {
     for (let targets in this.observers) {
       if (this.observers[targets] && this.observers[targets][id]) {
         delete this.observers[targets][id];

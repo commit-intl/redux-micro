@@ -140,9 +140,9 @@ describe("store", () => {
       result.push({stumpB: state});
     }
 
-    let listener0 = store.listen('a', stumpA);
-    let listener1 = store.listen('b', stumpA);
-    let listener2 = store.listen('b', stumpB);
+    let listener0 = store.subscribe('a', stumpA);
+    let listener1 = store.subscribe('b', stumpA);
+    let listener2 = store.subscribe('b', stumpB);
 
     expect(store.observers).toEqual({
       a: { 0: stumpA },
@@ -160,9 +160,9 @@ describe("store", () => {
 
     result = [];
 
-    store.removeListener(listener0);
-    store.removeListener(listener1);
-    store.removeListener(listener2);
+    store.unsubscribe(listener0);
+    store.unsubscribe(listener1);
+    store.unsubscribe(listener2);
     expect(store.observers).toEqual({
       a: {},
       b: {},
