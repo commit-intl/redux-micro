@@ -1,15 +1,13 @@
 const Store = function (state, actions, reducers, effects, logger) {
   const addArrayTo = function (array, target) {
-    let index = array.length;
-    while (index--) {
-      const entry = array[index];
-      let actionIndex = entry.actions.length;
-      while (actionIndex--) {
-        let action_id = entry.actions[actionIndex];
-        if (target[action_id])
-          target[action_id].push(entry);
-        else
-          target[action_id] = [entry];
+    for (let i in array) {
+      for (let j in array[i].actions) {
+        j = array[i].actions[j];
+        if (target[j]) {
+          target[j].push(array[i]);
+        } else {
+          target[j] = [array[i]];
+        }
       }
     }
   };
@@ -30,41 +28,57 @@ Store.prototype = {
     if (!this.observers[target])
       this.observers[target] = {};
     this.observers[target][this.id] = callback;
+    callback(this.state[target]);
     return this.id++;
   },
 
   unsubscribe: function (id) {
-    for (let targets in this.observers) {
-      if (this.observers[targets] && this.observers[targets][id]) {
-        delete this.observers[targets][id];
+    for (let i in this.observers) {
+      if (this.observers[i] && this.observers[i][id]) {
+        delete this.observers[i][id];
       }
     }
   },
 
   dispatch: function (action, payload) {
-    let i = (this.reducers[action] || []).length;
-    while (i--) {
-      const reducer = this.reducers[action][i];
-      const t = {};
-      t[reducer.target] = reducer.func(action, payload, this.state[reducer.target]);
-      this.state = { ...this.state, ...t };
-      if (this.observers[reducer.target]) {
-        for (const id in this.observers[reducer.target]) {
-          this.observers[reducer.target][id](this.state[reducer.target]);
-        }
+    const changes = {};
+    const state = {};
+    for (let i in this.state) {
+      state[i] = this.state[i];
+    }
+
+    for (let i in this.reducers[action]) {
+      let reducer = this.reducers[action][i];
+      state[reducer.target] = changes[reducer.target] = reducer.func(action, payload, state[reducer.target]);
+    }
+
+    this.state = state;
+
+    for (let i in changes) {
+      for (let j in this.observers[i]) {
+        this.observers[i][j](state[i]);
       }
     }
+
     if (this.logger) {
-      this.logger(action, payload, this.state);
+      this.logger(action, payload, state);
     }
-    i = (this.effects[action] || []).length;
-    while (i--) {
+
+    for (let i in this.effects[action]) {
       this.effects[action][i].func(action, payload, (actions) => {
-        let i = (actions || []).length;
-        while (i--) {
+        for (let i in actions) {
           this.dispatch(actions[i].action, actions[i].payload);
         }
       });
+    }
+  },
+
+  setState(state) {
+    this.state = state;
+    for (let i in this.observers) {
+      for(let j in this.observers[i]) {
+        this.observers[i][j](state[i]);
+      }
     }
   }
 };

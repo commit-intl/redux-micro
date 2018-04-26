@@ -4,7 +4,7 @@
 
 tiny redux store with effects support
 
-**0.6kB** _(minified + gzipped)_
+**0.5kB** _(minified + gzipped)_
 
 ``` bash
 npm install -S redux-micro
@@ -26,9 +26,9 @@ npm install -S redux-micro
 | method | parameters | returns |
 |--------|------------|---------|
 | dispatch | action: _string_, payload: _any_ | void |
+| setState | state: {} | void |
 | subscribe | targetBranch: _string_, callback: _(state) => void_ | int |
 | unsubscribe | id: _int_ | void |
-
 
 ### Reducer
 Object with following attributes:

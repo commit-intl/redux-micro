@@ -114,11 +114,11 @@ describe("store", () => {
     store.dispatch(actions.effect__chain);
     expect(result).toEqual([
       { action: actions.effect__chain, payload: undefined, state: { ...state, a: 123 } },
-      { action: actions.add, payload: 3, state: { ...state, a: 126 } },
-      { action: actions.effect, payload: undefined, state: { ...state, a: 126 } },
-      { action: actions.add, payload: 1, state: { ...state, a: 127 } },
-      { action: actions.effect, payload: undefined, state: { ...state, a: 127 } },
-      { action: actions.add, payload: 1, state: { ...state, a: 128 } },
+      { action: actions.effect, payload: undefined, state: { ...state, a: 123 } },
+      { action: actions.add, payload: 1, state: { ...state, a: 124 } },
+      { action: actions.effect, payload: undefined, state: { ...state, a: 124 } },
+      { action: actions.add, payload: 1, state: { ...state, a: 125 } },
+      { action: actions.add, payload: 3, state: { ...state, a: 128 } },
     ]);
   });
 
@@ -152,6 +152,9 @@ describe("store", () => {
     store.dispatch(actions.add, 1);
     store.dispatch(actions.clear);
     expect(result).toEqual([
+      {stumpA: 123},
+      {stumpA: {test: 'string'}},
+      {stumpB: {test: 'string'}},
       {stumpA: 124},
       {stumpA: 0},
       {stumpA: {}},
@@ -159,7 +162,16 @@ describe("store", () => {
     ]);
 
     result = [];
+    let testState = {a: 1337, b: {yee: 'haa'}};
+    store.setState(testState);
+    expect(result).toEqual([
+      {stumpA: testState.a},
+      {stumpA: testState.b},
+      {stumpB: testState.b},
+    ]);
+    expect(store.state).toEqual(testState);
 
+    result = [];
     store.unsubscribe(listener0);
     store.unsubscribe(listener1);
     store.unsubscribe(listener2);
