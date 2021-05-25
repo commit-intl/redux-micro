@@ -1,6 +1,6 @@
 {
   "name": "redux-micro",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "tiny redux store",
   "main": "dist/index.js",
   "scripts": {
@@ -10,9 +10,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ShynRou/micro-redux.git"
+    "url": "git+https://github.com/commit-intl/micro-redux.git"
   },
   "keywords": [
+    "flux",
     "redux",
     "effects",
     "reducers",
@@ -22,12 +23,12 @@
     "javascript",
     "js"
   ],
-  "author": "Dustin Hagemeier",
-  "license": "GPL-3.0",
+  "author": "Dustin Hagemeier <dustin@commit.international> (https://commit.international)",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ShynRou/micro-redux/issues"
+    "url": "https://github.com/commit-intl/micro-redux/issues"
   },
-  "homepage": "https://github.com/ShynRou/micro-redux#readme",
+  "homepage": "https://github.com/commit-intl/micro-redux#readme",
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-babili": "^0.1.4",
