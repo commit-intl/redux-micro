@@ -1,8 +1,11 @@
 {
   "name": "redux-micro",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "tiny redux store",
   "main": "dist/index.js",
+  "files": [
+    "dist/"
+  ],
   "scripts": {
     "test": "jest --coverage",
     "build": "tsc --emitDeclarationOnly && esbuild src/index.ts --bundle --minify --sourcemap --target=chrome58,firefox57,safari11,edge16 --outfile=./dist/index.js",
