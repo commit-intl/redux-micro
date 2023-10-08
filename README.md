@@ -1,4 +1,5 @@
 # redux-micro
+
 [![Build Status](https://travis-ci.org/coding-intl/redux-micro.svg?branch=master)](https://travis-ci.org/coding-intl/redux-micro)
 [![Coverage Status](https://coveralls.io/repos/github/coding-intl/redux-micro/badge.svg?branch=master)](https://coveralls.io/github/coding-intl/redux-micro?branch=master)
 
@@ -6,44 +7,71 @@ tiny redux store with effects support
 
 **0.5kB** _(minified + gzipped)_
 
-``` bash
+```bash
 npm install -S redux-micro
+yarn add redux-micro
 ```
 
-
 ## Usage
-### Store
-#### constructor
-| parameter | type |
-|---------|--------|
-| state | {} |
-| actions | {} |
-| reducers | [Reducer](#reducer)\[\] |
-| effects | [Effect](#effect)\[\] |
-| logger | (action: _string_, payload: _any_, state: _any_) => void |
 
-#### methods
-| method | parameters | returns |
-|--------|------------|---------|
-| dispatch | action: _string_, payload: _any_ | void |
-| setState | state: {} | void |
-| subscribe | targetBranch: _string_, callback: _(state) => void_ | int |
-| unsubscribe | id: _int_ | void |
+```ts
+type State = {
+  alpha: number;
+  beta: Record<string, string>;
+  gamma?: { isHappy?: boolean };
+};
 
-### Reducer
-Object with following attributes:
+enum Action {
+  clear = "clear",
+  add = "add",
+  set = "set",
+  request_happy = "request_happy"
+  request_happy_success = "request_happy_success"
+}
 
-| attribute | type | description |
-|-----------|------|-------------|
-| target    | string | store branch to be effected
-| actions | string[] | actions on which this reducer will be triggered |
-| func | (action: _string_, payload: _any_, state: _any_) => any | reducer func that shall be pure |
+type Requests = {
+  [Action.clear]: undefined;
+  [Action.add]: number;
+  [Action.set]: { key: string; value: string };
+  [Action.request_happy]: undefined;
+  [Action.request_happy_success]: boolean;
+};
 
-### Effect
-Object with following attributes:
+const reducers: ReducerMap<State, Requests> = {
+  [Action.clear]: (state, action, payload) => {
+    return { ...state, a: 0, b: {} };
+  },
+  [Action.add]: (state, action, payload) => {
+    return { ...state, a: state.a + payload };
+  },
+  [Action.set]: (state, action, payload) => {
+    return { ...state, beta: { ...state.beta, [payload.key]: payload.value} };
+  },
+  [Action.request_happy]: (state, action, payload, dispatch) => {
+    fetch("/api/is-happy").then(response => {
+      if (response.ok) {
+        dispatch(Action.request_happy_success, true);
+      } else {
+        dispatch(Action.request_happy_success, false);
+      }
+    }).catch(() => {
+      dispatch(Action.request_happy_success, false);
+    })
+    return state;
+  },
+  [Action.request_happy_success]: (state, action, payload) => {
+    return { ...state, gamma: {isHappy: payload} };
+  },
+};
 
-| attribute | type | description |
-|-----------|------|-------------|
-| actions | string[] | actions on which this reducer will be triggered |
-| func | (action: _string_, payload: _any_, callback: _({action: string, payload: any}\[\]) => void_ | effect func that calls the callback with all successive dispatch calls |
+const initialState: State = {
+  alpha: 0,
+  beta: {},
+};
 
+const store = new Store<State, Requests>(initialState, reducers);
+
+store.subscribe((state, action, payload) => console.log(action, payload));
+
+store.dispatch(Action.request_happy, undefined);
+```

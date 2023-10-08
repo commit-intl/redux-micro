@@ -93,15 +93,15 @@ export class Store<
     payload: Requests[Action]
   ) {
     let state = this.state;
-    const actions: [action: keyof Requests, payload: Requests[keyof Requests]][] = [[action, payload]];
+    const requests: [action: keyof Requests, payload: Requests[keyof Requests]][] = [[action, payload]];
     let synchrounous = true;
-    const smartDispatch = (action: keyof Requests, payload: Requests[keyof Requests]) => synchrounous ? actions.push([action, payload]) : this.dispatch(action, payload);
+    const smartDispatch = (action: keyof Requests, payload: Requests[keyof Requests]) => synchrounous ? requests.push([action, payload]) : this.dispatch(action, payload);
     let i = 0;
 
-    while (i < actions.length) {
-      const [action, payload] = actions[i];
-      state = this.reducers[action](state, action, payload, smartDispatch);
-      this.logger?.(state, action, payload);
+    while (i < requests.length) {
+      const request = requests[i];
+      state = this.reducers[request[0]](state, request[0], request[1], smartDispatch);
+      this.logger?.(state, request[0], request[1]);
       i++;
     }
 

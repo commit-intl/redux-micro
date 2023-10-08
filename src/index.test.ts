@@ -8,7 +8,7 @@ type State = {
 
 const initialState: State = { a: 123, b: { test: "string" } };
 
-enum Actions {
+enum Action {
   clear = "clear",
   add = "add",
   effect = "effect",
@@ -18,37 +18,37 @@ enum Actions {
 }
 
 type Requests = {
-  [Actions.clear]: undefined;
-  [Actions.add]: number;
-  [Actions.effect]: undefined;
-  [Actions.effect__chain]: undefined;
-  [Actions.effect__chainless]: undefined;
-  [Actions.effect__async]: undefined;
+  [Action.clear]: undefined;
+  [Action.add]: number;
+  [Action.effect]: undefined;
+  [Action.effect__chain]: undefined;
+  [Action.effect__chainless]: undefined;
+  [Action.effect__async]: undefined;
 };
 
 const reducers: ReducerMap<State, Requests> = {
-  [Actions.clear]: (state, action, payload) => {
+  [Action.clear]: (state, action, payload) => {
     return { ...state, a: 0, b: {} };
   },
-  [Actions.add]: (state, action, payload) => {
+  [Action.add]: (state, action, payload) => {
     return { ...state, a: state.a + payload };
   },
-  [Actions.effect]: (state, action, payload, dispatch) => {
-    dispatch(Actions.add, 1);
+  [Action.effect]: (state, action, payload, dispatch) => {
+    dispatch(Action.add, 1);
     return state;
   },
-  [Actions.effect__chainless]: (state, action, payload, dispatch) => {
+  [Action.effect__chainless]: (state, action, payload, dispatch) => {
     return state;
   },
-  [Actions.effect__chain]: (state, action, payload, dispatch) => {
-    dispatch(Actions.effect, undefined);
-    dispatch(Actions.effect, undefined);
-    dispatch(Actions.add, 3);
+  [Action.effect__chain]: (state, action, payload, dispatch) => {
+    dispatch(Action.effect, undefined);
+    dispatch(Action.effect, undefined);
+    dispatch(Action.add, 3);
     return state;
   },
-  [Actions.effect__async]: (state, action, payload, dispatch) => {
+  [Action.effect__async]: (state, action, payload, dispatch) => {
     setTimeout(() => {
-      dispatch(Actions.add, 3);
+      dispatch(Action.add, 3);
     }, 0);
     return state;
   }
@@ -81,60 +81,60 @@ describe("store", () => {
   });
 
   it("reducer", () => {
-    store.dispatch(Actions.add, 1);
-    store.dispatch(Actions.add, 2);
+    store.dispatch(Action.add, 1);
+    store.dispatch(Action.add, 2);
 
     expect(result).toEqual([
-      { action: Actions.add, payload: 1, state: { ...initialState, a: 124 } },
-      { action: Actions.add, payload: 2, state: { ...initialState, a: 126 } }
+      { action: Action.add, payload: 1, state: { ...initialState, a: 124 } },
+      { action: Action.add, payload: 2, state: { ...initialState, a: 126 } }
     ]);
 
-    store.dispatch(Actions.clear, undefined);
+    store.dispatch(Action.clear, undefined);
     expect(store.getState()).toEqual({ a: 0, b: {} });
   });
 
   it("effect", () => {
-    store.dispatch(Actions.effect, undefined);
+    store.dispatch(Action.effect, undefined);
     expect(result).toEqual([
       {
-        action: Actions.effect,
+        action: Action.effect,
         payload: undefined,
         state: { ...initialState, a: 123 }
       },
-      { action: Actions.add, payload: 1, state: { ...initialState, a: 124 } }
+      { action: Action.add, payload: 1, state: { ...initialState, a: 124 } }
     ]);
   });
 
   it("effect chain", () => {
-    store.dispatch(Actions.effect__chain, undefined);
+    store.dispatch(Action.effect__chain, undefined);
     expect(result).toEqual([
       {
-        action: Actions.effect__chain,
+        action: Action.effect__chain,
         payload: undefined,
         state: initialState
       },
       {
-        action: Actions.effect,
+        action: Action.effect,
         payload: undefined,
         state: initialState
       },
       {
-        action: Actions.effect,
+        action: Action.effect,
         payload: undefined,
         state: initialState
       },
       {
-        action: Actions.add,
+        action: Action.add,
         payload: 3,
         state: { ...initialState, a: initialState.a + 3 }
       },
       {
-        action: Actions.add,
+        action: Action.add,
         payload: 1,
         state: { ...initialState, a: initialState.a + 4 }
       },
       {
-        action: Actions.add,
+        action: Action.add,
         payload: 1,
         state: { ...initialState, a: initialState.a + 5 }
       }
@@ -142,10 +142,10 @@ describe("store", () => {
   });
 
   it("effect chainless", () => {
-    store.dispatch(Actions.effect__chainless, undefined);
+    store.dispatch(Action.effect__chainless, undefined);
     expect(result).toEqual([
       {
-        action: Actions.effect__chainless,
+        action: Action.effect__chainless,
         payload: undefined,
         state: initialState
       }
@@ -153,10 +153,10 @@ describe("store", () => {
   });
 
   it("effect async", async () => {
-    store.dispatch(Actions.effect__async, undefined);
+    store.dispatch(Action.effect__async, undefined);
     expect(result).toEqual([
       {
-        action: Actions.effect__async,
+        action: Action.effect__async,
         payload: undefined,
         state: initialState
       }
@@ -166,12 +166,12 @@ describe("store", () => {
 
     expect(result).toEqual([
       {
-        action: Actions.effect__async,
+        action: Action.effect__async,
         payload: undefined,
         state: initialState
       },
       {
-        action: Actions.add,
+        action: Action.add,
         payload: 3,
         state: { ...initialState, a: initialState.a + 3 }
       }
@@ -200,8 +200,8 @@ describe("store", () => {
     let selectA = store.select(state => state.a);
     selectA.subscribe(stumpA);
 
-    store.dispatch(Actions.add, 1);
-    store.dispatch(Actions.clear, undefined);
+    store.dispatch(Action.add, 1);
+    store.dispatch(Action.clear, undefined);
     expect(result).toEqual([
       { stumpRoot: { ...initialState, a: initialState.a + 1 } },
       { stumpA: initialState.a + 1 },
@@ -220,7 +220,7 @@ describe("store", () => {
     selectA.close();
     expect(store.observers).toEqual({});
 
-    store.dispatch(Actions.add, 21203);
+    store.dispatch(Action.add, 21203);
     expect(result).toEqual([]);
   });
 });
