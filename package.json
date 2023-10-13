@@ -1,14 +1,19 @@
 {
   "name": "redux-micro",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "tiny redux store",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist/"
   ],
   "scripts": {
     "test": "jest --coverage",
-    "build": "tsc --emitDeclarationOnly && esbuild src/index.ts --bundle --minify --sourcemap --target=chrome58,firefox57,safari11,edge16 --outfile=./dist/index.js",
+    "build": "yarn build:ts && yarn build:esm && yarn build:cjs",
+    "build:ts": "tsc --emitDeclarationOnly",
+    "build:esm": "esbuild src/index.ts --bundle --minify --sourcemap --target=chrome58,firefox57,safari11,edge16 --format=esm --outfile=./dist/index.esm.js",
+    "build:cjs": "esbuild src/index.ts --bundle --minify --sourcemap --target=chrome58,firefox57,safari11,edge16 --format=cjs --outfile=./dist/index.cjs.js",
     "prepublish": "npm run build"
   },
   "repository": {
