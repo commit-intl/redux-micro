@@ -5,7 +5,7 @@
 
 tiny redux store with effects support
 
-**0.5kB** _(minified + gzipped)_
+**1kB** _(minified + gzipped)_
 
 ```bash
 npm install -S redux-micro

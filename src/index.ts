@@ -1,3 +1,5 @@
+export type Dispatch<Requests> = <Action extends keyof Requests>(action: Action, payload: Requests[Action]) => void; 
+
 export type Reducer<
   State,
   Requests,
@@ -7,10 +9,7 @@ export type Reducer<
   state: State,
   action: Action,
   payload: Payload,
-  dispatch: <Action extends keyof Requests>(
-    action: Action,
-    payload: Requests[Action]
-  ) => void
+  dispatch: Dispatch<Requests>
 ) => State;
 
 export type ReducerMap<State, Requests> = {
@@ -23,7 +22,7 @@ export type ReducerMap<State, Requests> = {
 };
 
 export type Observer<State> = (state: State) => void;
-export type Selector<State> = (state: State) => any;
+export type Selector<State, SelectorState> = (state: State) => SelectorState;
 
 export class Observable<State> {
   public observers: { [key: string]: Observer<State> } = {};
@@ -53,10 +52,10 @@ export class Observable<State> {
     delete this.observers[id];
   }
 
-  select(selector: Selector<State>) {
+  select<SelctorState>(selector: Selector<State, SelctorState>) {
     let id: number;
 
-    const observable = new Observable<State>(selector(this.state), () =>
+    const observable = new Observable<SelctorState>(selector(this.state), () =>
       this.unsubscribe(id)
     );
 

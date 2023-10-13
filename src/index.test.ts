@@ -180,7 +180,9 @@ describe("store", () => {
 
   it("observers", () => {
     store.logger = undefined;
-    function stumpA(state: State) {
+    function stumpVoid(state: State) {}
+
+    function stumpA(state: State["a"]) {
       result.push({ stumpA: state });
     }
 
@@ -188,7 +190,7 @@ describe("store", () => {
       result.push({ stumpRoot: state });
     }
 
-    let listener0 = store.subscribe(stumpA);
+    let listener0 = store.subscribe(stumpVoid);
     let listener1 = store.subscribe(stumpRoot);
 
     store.unsubscribe(listener0);
